@@ -6,7 +6,6 @@ import (
 )
 
 func SetupRoutes(router *mux.Router) *mux.Router {
-	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	router.HandleFunc("/todos", handlers.GetTodos).Methods("GET")
 	router.HandleFunc("/todos", handlers.CreateTodo).Methods("POST")
 	router.HandleFunc("/todos/{id}", handlers.GetTodo).Methods("GET")

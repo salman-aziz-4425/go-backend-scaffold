@@ -9,12 +9,7 @@ import (
 	"github.com/salman-aziz-4425/Trello-reimagined/internals/models"
 )
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// Implement your logic here
-}
-
 func GetTodos(w http.ResponseWriter, r *http.Request) {
-	// Implement your logic here
 	todos := []models.Todo{}
 	rows, err := db.Pool.Query(context.Background(), "SELECT * FROM todos")
 	if err != nil {
