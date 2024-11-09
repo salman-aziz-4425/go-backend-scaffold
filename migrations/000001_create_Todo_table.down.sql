@@ -1,0 +1,1 @@
+ALTER TABLE Todo DROP COLUMN created;

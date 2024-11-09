@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/salman-aziz-4425/Trello-reimagined/internals/db"
 	"github.com/salman-aziz-4425/Trello-reimagined/internals/models"
 )
 
 func GetTodos(w http.ResponseWriter, r *http.Request) {
 	todos := []models.Todo{}
-	rows, err := db.Pool.Query(context.Background(), "SELECT * FROM todos")
+	rows, err := db.Pool.Query(context.Background(), "SELECT * FROM todo")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -34,17 +35,39 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	todoData := models.Todo{}
 	json.NewDecoder(r.Body).Decode(&todoData)
-	err := db.Pool.QueryRow(context.Background(), "INSERT INTO todos (title, completed) VALUES ($1, $2) RETURNING id", todoData.Title, todoData.Completed).Scan(&todoData.ID)
+	err := db.Pool.QueryRow(context.Background(), "INSERT INTO todo (title, completed) VALUES ($1, $2) RETURNING id", todoData.Title, todoData.Completed).Scan(&todoData.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	json.NewEncoder(w).Encode(map[string]int{"id": todoData.ID})
 	w.WriteHeader(http.StatusCreated)
 }
 
 func GetTodo(w http.ResponseWriter, r *http.Request) {
-	// Implement your logic here
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	row := models.Todo{}
+	rows, err := db.Pool.Query(context.Background(), "SELECT * FROM todo WHERE ID = $1", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	for rows.Next() {
+		err = rows.Scan(&row.ID, &row.Title, &row.Completed)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(row)
+	w.WriteHeader(http.StatusOK)
 }
 
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {

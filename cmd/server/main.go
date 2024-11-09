@@ -11,7 +11,6 @@ import (
 
 func main() {
 	db.Init()
-
 	defer db.Pool.Close()
 	router := mux.NewRouter()
 	routes.SetupRoutes(router)
