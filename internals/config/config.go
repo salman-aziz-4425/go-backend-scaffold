@@ -17,7 +17,13 @@ func LoadConfig() *Config {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}
 
+	secretKey := os.Getenv("SECRET_KEY")
+	if secretKey == "" {
+		log.Fatal("SECRET_KEY environment variable is not set")
+	}
+
 	return &Config{
 		DatabaseURL: dbURL,
+		SecretKey:   secretKey,
 	}
 }

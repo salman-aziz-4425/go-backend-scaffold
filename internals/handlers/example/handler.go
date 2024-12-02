@@ -1,4 +1,4 @@
-package handlers
+package example
 
 import (
 	"context"
@@ -71,7 +71,16 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {
-	// Implement your logic here
+	reqData := models.Todo{}
+	json.NewDecoder(r.Body).Decode(&reqData)
+	vars := mux.Vars(r)
+	id := vars["id"]
+	_, err := db.Pool.Exec(context.Background(), "UPDATE todo SET title = $1, completed = $2 WHERE id = $3", reqData.Title, reqData.Completed, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
