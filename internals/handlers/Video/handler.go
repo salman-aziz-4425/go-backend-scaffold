@@ -2,7 +2,6 @@ package video
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/salman-aziz-4425/Trello-reimagined/internals/models"
@@ -10,16 +9,16 @@ import (
 
 type ContextKey string
 
-const usernameKey ContextKey = "username"
+const userKey ContextKey = "user"
 
 func AddGroup(w http.ResponseWriter, r *http.Request) {
 	println("AddGroup")
-	username, ok := r.Context().Value(usernameKey).(string)
+	user, ok := r.Context().Value(userKey).(string)
 	if !ok {
 		http.Error(w, "Username not found in context", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "Hello, %s!", username)
+	println("User:", user)
 	var video = models.Video{}
 
 	err := json.NewDecoder(r.Body).Decode(&video)

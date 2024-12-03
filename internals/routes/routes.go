@@ -13,6 +13,6 @@ import (
 func SetupRoutes(router *mux.Router) *mux.Router {
 	router.HandleFunc("/login", User.Login).Methods("POST")
 	router.HandleFunc("/register", User.Register).Methods("POST")
-	router.Handle("/group", middleware.VerifyToken(http.HandlerFunc(video.AddGroup))).Methods("POST")
+	router.Handle("/group", middleware.ProtectedGuard(http.HandlerFunc(video.AddGroup))).Methods("POST")
 	return router
 }

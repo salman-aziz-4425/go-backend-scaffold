@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -9,11 +10,11 @@ import (
 	"github.com/salman-aziz-4425/Trello-reimagined/pkg/utils"
 )
 
-type contextKey string
+type ContextKey string
 
-const usernameKey contextKey = "username"
+const userKey ContextKey = "user"
 
-func VerifyToken(next http.Handler) http.Handler {
+func ProtectedGuard(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
@@ -26,18 +27,31 @@ func VerifyToken(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		if mapClaims, ok := claims.(jwt.MapClaims); ok {
-			username, ok := mapClaims["username"].(string)
-			if !ok {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			println("Username:", username)
-			ctx := context.WithValue(r.Context(), usernameKey, username)
-			next.ServeHTTP(w, r.WithContext(ctx))
-		} else {
+		mapClaims, ok := claims.(jwt.MapClaims)
+		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
+		username, ok := mapClaims["username"].(string)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		fmt.Println("Username from token:", username)
+		id, ok := mapClaims["Id"].(float64)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		println("ID from token:", id)
+		user := struct {
+			ID       int
+			Username string
+		}{
+			ID:       int(id),
+			Username: username,
+		}
+		ctx := context.WithValue(r.Context(), userKey, user)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-
 }
