@@ -43,15 +43,13 @@ func ProtectedGuard(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		println("ID from token:", id)
-		user := struct {
+		ctx := context.WithValue(r.Context(), userKey, struct {
 			ID       int
 			Username string
 		}{
 			ID:       int(id),
 			Username: username,
-		}
-		ctx := context.WithValue(r.Context(), userKey, user)
+		})
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

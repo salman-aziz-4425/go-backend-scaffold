@@ -9,7 +9,7 @@ import (
 	"github.com/salman-aziz-4425/Trello-reimagined/internals/config"
 )
 
-var Pool *pgxpool.Pool // in memmory
+var Pool *pgxpool.Pool
 
 func Init() {
 	dbURL := config.LoadConfig().DatabaseURL
