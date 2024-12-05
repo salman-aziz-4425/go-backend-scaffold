@@ -50,6 +50,5 @@ func VerifyToken(tokenString string) (jwt.Claims, error) {
 	if !ok {
 		return nil, fmt.Errorf("invalid claims type")
 	}
-	println("Username:", claims)
 	return claims, nil
 }

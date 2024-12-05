@@ -41,7 +41,6 @@ func AddGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetGroupDetails(w http.ResponseWriter, r *http.Request) {
-	println("getGroupDetails")
 	w.Header().Set("Content-Type", "application/json")
 	user, ok := r.Context().Value(middleware.ContextKey("user")).(struct {
 		ID       int
@@ -58,7 +57,5 @@ func GetGroupDetails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	println("Video groups fetched successfully!")
-	println("Groups:", groups[0].ID, groups[0].GroupName, groups[0].AuthorId)
 	json.NewEncoder(w).Encode(groups)
 }

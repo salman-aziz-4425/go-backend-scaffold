@@ -31,11 +31,9 @@ func GetGroupDetailsLogic(authorId int) ([]struct {
 	AuthorId  int
 	GroupName string
 }, error) {
-	println("getGroupDetails")
 	rows, err := db.Pool.Query(
 		context.Background(),
-		"SELECT id as ID,title,author_id FROM videos WHERE author_id = $1",
-		authorId,
+		"SELECT id as ID,title,author_id FROM videos",
 	)
 	if err != nil {
 		println("Error querying videos table:", err.Error())

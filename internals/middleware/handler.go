@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -37,7 +36,6 @@ func ProtectedGuard(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		fmt.Println("Username from token:", username)
 		id, ok := mapClaims["Id"].(float64)
 		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
