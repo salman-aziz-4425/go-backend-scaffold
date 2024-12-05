@@ -1,4 +1,4 @@
-# Go Scaffold Backend 
+# lets_talk_backend
 
 <img src="https://github.com/user-attachments/assets/430303f4-93ec-4be6-84cf-1bf42e572aed" alt="Project Image" width="200"/>
 
