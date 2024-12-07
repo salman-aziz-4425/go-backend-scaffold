@@ -19,7 +19,7 @@ A brief description of your project. Explain what it does, its main features, an
 
 1. Clone the repository:
    ```bash
-   https://github.com/salman-aziz-4425/Trello-reimagined-backend.git
+   https://github.com/salman-aziz-4425/lets_talk_backend.git
    ```
 2. Navigate to the project directory:
    ```bash
