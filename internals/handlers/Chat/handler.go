@@ -16,14 +16,14 @@ var upgrader = websocket.Upgrader{
 }
 
 type ClientManager struct {
-	Clients   map[string]map[*websocket.Conn]string // Grouped clients by groupId
+	Clients   map[string]map[*websocket.Conn]string
 	Broadcast chan models.Message
 	Mutex     sync.Mutex
 }
 
 func NewClientManager() *ClientManager {
 	return &ClientManager{
-		Clients:   make(map[string]map[*websocket.Conn]string), // Maps groupId -> clients
+		Clients:   make(map[string]map[*websocket.Conn]string),
 		Broadcast: make(chan models.Message),
 	}
 }
@@ -51,11 +51,7 @@ func (manager *ClientManager) HandleConnections(w http.ResponseWriter, r *http.R
 
 	log.Printf("New client connected to group: %s", groupId)
 	defer manager.HandleClientExit(groupId, ws)
-
-	// Notify other clients about the new peer
 	manager.broadcastNewPeer(groupId, ws)
-
-	// Read incoming messages from the WebSocket
 	for {
 		var msg models.Message
 		err := ws.ReadJSON(&msg)
@@ -64,22 +60,19 @@ func (manager *ClientManager) HandleConnections(w http.ResponseWriter, r *http.R
 			break
 		}
 		log.Printf("Received message: %+v\n", msg)
-
-		// Ensure the group ID is included in the message
 		msg.Group = groupId
 		manager.Broadcast <- msg
 	}
 }
 
 func (manager *ClientManager) broadcastNewPeer(groupId string, ws *websocket.Conn) {
-	// Broadcast NEW_PEER message to all clients in the group
 	manager.Mutex.Lock()
 	for client := range manager.Clients[groupId] {
 		if client != ws {
 			msg := models.Message{
 				Type:   "NEW_PEER",
 				Group:  groupId,
-				PeerID: ws.RemoteAddr().String(), // You can adjust this to send a peer ID
+				PeerID: ws.RemoteAddr().String(),
 			}
 			err := client.WriteJSON(msg)
 			if err != nil {
@@ -102,6 +95,7 @@ func (manager *ClientManager) HandleMessages() {
 				client.Close()
 				delete(manager.Clients[msg.Group], client)
 			} else {
+
 				log.Printf("Message sent to client in group: %s\n", msg.Group)
 			}
 		}
@@ -118,20 +112,17 @@ func (manager *ClientManager) HandleClientExit(groupId string, ws *websocket.Con
 		}
 	}
 	manager.Mutex.Unlock()
-
-	// Notify other clients that a peer has disconnected
 	manager.broadcastRemovePeer(groupId, ws)
 }
 
 func (manager *ClientManager) broadcastRemovePeer(groupId string, ws *websocket.Conn) {
-	// Broadcast REMOVE_PEER message to all clients in the group
 	manager.Mutex.Lock()
 	for client := range manager.Clients[groupId] {
 		if client != ws {
 			msg := models.Message{
 				Type:   "REMOVE_PEER",
 				Group:  groupId,
-				PeerID: ws.RemoteAddr().String(), // Same as before, use appropriate peer ID
+				PeerID: ws.RemoteAddr().String(),
 			}
 			err := client.WriteJSON(msg)
 			if err != nil {
