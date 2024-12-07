@@ -2,14 +2,6 @@
 
 <img src="https://github.com/user-attachments/assets/430303f4-93ec-4be6-84cf-1bf42e572aed" alt="Project Image" width="200"/>
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Installation
 
 1. Clone the repository:
@@ -24,8 +16,7 @@
    ```bash
    go mod tidy
    ```
-4. Set up your environment variables by creating a `.env` file in the `internals` directory. Refer to `internals/.env` for the required variables.
-
+   
 ## Usage
 
 Provide instructions on how to run your project. For example:
